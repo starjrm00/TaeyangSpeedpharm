@@ -6,10 +6,10 @@ import pandas as pd
 import os
 
 #for local
-#cred = credentials.Certificate("firebase_service_key.json")
+cred = credentials.Certificate("firebase_service_key.json")
 
 #for distribution
-cred = json.loads(st.secrets["firebase_service_key"])
+#cred = json.loads(st.secrets["firebase_service_key"])
 
 if not firebase_admin._apps:
     firebase_admin.initialize_app(cred)

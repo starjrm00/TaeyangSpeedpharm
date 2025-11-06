@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
 from datetime import date
-from Firebase_upload import upload_data
+from XlsxToDataframe import xlsxToDf
+from Firebase_upload import reduce_stock
 from Firebase_datacheck import datacheck as get_product
 # 🔸 이미 구현되어 있다고 가정
 # from your_firestore_module import upload_data, get_product
@@ -13,12 +14,12 @@ st.title("태양메디 재고관리 시스템")
 uploaded_file = st.file_uploader("📤 재고 데이터 엑셀 업로드 (xlsx)", type=["xlsx"])
 
 if uploaded_file:
-    df = pd.read_excel(uploaded_file)
+    df = xlsxToDf(uploaded_file)
     st.success(f"엑셀 파일이 업로드되었습니다. ({len(df)}행)")
     
     # Firestore 반영
     if st.button("DB에 업로드"):
-        upload_data(df)
+        reduce_stock(df)
         st.success("✅ 데이터가 Firestore에 업로드되었습니다.")
 
 st.divider()

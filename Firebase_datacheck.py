@@ -12,6 +12,7 @@ def datacheck():
     docs = col_ref.stream()
 
     for doc in docs:
+        print("docs의 doc세팅중")
         doc_data = doc.to_dict()
         doc_id = doc.id
 
@@ -30,6 +31,7 @@ def datacheck():
         재고_dict = snapshot.to_dict().get("재고", {}) if snapshot.exists else {}
 
         # 날짜별로 분리
+        print("날짜별 data분리중")
         for 날짜, 재고 in 재고_dict.items():
             products.append({
                 "문서ID": doc_id,
