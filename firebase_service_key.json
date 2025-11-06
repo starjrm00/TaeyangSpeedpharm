@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "taeyangspeedpharm",
+  "private_key_id": "856456590156c5c3a60b5074f75dd2d41f7b8198",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCxeZZJysfoPShC\nRU8n/WQ6j8Ubz+5RWDK7EW4bnWE4ClyEI93eIJlX+wk2gQw7XbfT0wW1dITCxWoq\nObWZzN3Bj0/kVz9kKQMtqsaFrmNTQ3lUwGHHSi0VNlIsKrwo3X1CpmgKbhk/l1yb\nk+g3q64pNTm/EjB8vX0Hm5dfVzezYj7duxQq0BaNpgM/xCRbLZr1kGbrlMQis2e+\n2Az3xAOs5D0ynrR3eOG6l6TB3fE4NBqhx+rt7SqGDiCSurL7WIvWqy2YkVbrHzXe\n4Wtt/esAcfzVv1dLsYzXA4gGro8x+FOjocwbMZZYhrokCsOUyFe285rgpd3WekAt\nC+dwQBotAgMBAAECggEAAWz/Ipeg9IItRR8GbEVSXVATXs5UVU32ll8k+c7RXaBj\nruIU4bh0Uuse31O5E+8ET4zV8me9u0zXtgAhr9sf+vKaSzTSOw1DS8Yf8yn7/UrA\n+kfTYUT8yLtXfKhZO6DP5U2t70uEI2klYtCU4IGeFBGr5ZeRUSc6jmmXFTp/pY7E\njQx1JQhMnJUKe8vytyocoWDVaCNCYMK7yFDnas9Z5nj2PMhGgH/TyYgeZdTax0Yj\nbLi3/mdZLzKyUW4mhv+CI3lycbQxuXhstHLwBPboluZ9HsRmVF3N0tu1UeuKPSV/\nCnLMo8EvplmiUFDHpzdS8K6yDZHjY6EALTS4Gy/YAQKBgQDu8KkTR37WGhhyJPyK\nRERQQUYb4XAqx3SwiQIcRI2m6dEGOQWs1lNiCrW2Dnp9VjmJKGr4UjYnB+eWm4tM\n51kIvvg9MiqBSEaFB2azxtsBF0QWByCn6IPuXT22hwjGczHmztqTDx8EY5HcShWk\nBgAL3oGuKEQ7FxYi5sjaEUaUAQKBgQC+JXgEih8ZnFJ1ObBByLZWYOtW91elQmSe\n3+zsOE8Ozs/FFBdPs3aPUKCRnKf1KEeKAXAMj+EHmmjmxhdZ2aIW6jHieBTwirSf\n4pfoFJK4aIiSztpxv/uwJOj7vPsKS6rcsN/6TBixyYtGalJ+nhwYTVE7moG/LwjM\nN3uL1iAWLQKBgQCoNcJBcU6oeVyGVuV2jVKuURWDITTu2NWcRge3UMeMHwTo5ZHK\nOGQhHDsKPK0cuWvt1AdiY7X9ykHONBhf/moejxqBMmTb+L60fh5eJ3scDH4BJ+lk\na3sdfoSoj+2sj4Is46jaaIXEeDhCJeGQRC0aLf2LVouaMcmCrofthMX0AQKBgC26\ncxecZAhTuNzqR8I6U+eIHXDnwRNEWVCAB8lzbUfhYsRBpa2MOloTCNqb8ySZUEMX\nP2w1+edLMik1wI3iMgISxnZxbI/Au9mrs96je/mPYjD0QEKU6iGdbs6Dz1fVhLzY\naLUYMeQn1S/VCAvdWGJbzcpoyQVCeXorabHiiArtAoGAPk5kAVZKHF/Ey4oq7kos\nlRvFOdsF1Yarz74JGG6OloRXRPYf4DkT7OwQm6fLNKCx6jx3LXnsnMk86mN84ldM\nO90ecEdp9sDXfZDTeFi8FVMrpxf8o29/JDLvwP8bZ5o6wY6AcQ7DyRhvEaI8Jdsa\nhmv6rA7Qy282MdUNDGF/+FU=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-fbsvc@taeyangspeedpharm.iam.gserviceaccount.com",
+  "client_id": "118176963230221995618",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40taeyangspeedpharm.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
