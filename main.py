@@ -1,5 +1,4 @@
 import pandas as pd
-from Firebase_connect import get_product
 from Firebase_upload import upload_data
 from Firebase_datacheck import datacheck
 '''

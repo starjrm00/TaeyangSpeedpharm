@@ -47,3 +47,15 @@ def datacheck():
 
     df = pd.DataFrame(products)
     return df
+
+def get_product():
+    print(db.project)
+    col_ref = db.collection("Product")
+    docs = col_ref.stream()
+    rows = []
+
+    for doc in docs:
+        data = doc.to_dict()
+        rows.append(data)
+
+    return pd.DataFrame(rows)
