@@ -11,9 +11,7 @@ import os
 #for distribution
 cred = json.loads(st.secrets["firebase_service_key"])
 
-try:
+if not firebase_admin._apps:
     firebase_admin.initialize_app(cred)
-except:
-    pass
 
 db = firestore.client(database_id = "default")
