@@ -1,6 +1,6 @@
 from Firebase_connect import db
 
-def reduce_stock(row):
+def upload_new_data(row):
     doc_id = f"{row['거래처']}_{row['상품명']}_{row['규격']}"
     product_ref = db.collection("Product").document(doc_id)
 
@@ -25,3 +25,26 @@ def reduce_stock(row):
     product_ref.update({
         "재고": existing_stock
     })
+
+def reduce_stock(row):
+    '''
+    doc_id = f"{row['거래처']}_{row['상품명']}_{row['규격']}"
+    product_ref = db.collection("Product").document(doc_id)
+
+    date_str = str(row["날짜"].date())
+
+    snapshot = product_ref.get(field_paths=["`재고`"])    
+    existing_stock = snapshot.to_dict().get("재고", {}) if snapshot.exists else {}
+
+    current_stock = existing_stock.get(date_str, 0)
+    existing_stock[date_str] = current_stock - row["재고"]
+
+    product_ref.update({
+        "재고": existing_stock
+    })
+    '''
+
+def undo_change(row):
+    '''
+    lala
+    '''

@@ -3,51 +3,53 @@ import pandas as pd
 from datetime import date
 from XlsxToDataframe import xlsxToDf
 from Firebase_upload import reduce_stock
+from Firebase_upload import undo_change
 from Firebase_datacheck import datacheck as get_product
-# 🔸 이미 구현되어 있다고 가정
-# from your_firestore_module import upload_data, get_product
 
 st.set_page_config(page_title="재고 관리 시스템", layout="wide")
 st.title("태양메디 재고관리 시스템")
 
-# --- 1️⃣ 엑셀 업로드 영역 ---
-uploaded_file = st.file_uploader("📤 재고 데이터 엑셀 업로드 (xlsx)", type=["xlsx"])
+#button 세팅
+col1, col2, col3 = st.columns([1, 1, 1])
+with col1:
+    btn1 = st.button("DB편집창")
+with col2:
+    btn2 = st.button("비 약국 거래 + 약국 통합 조회창")
+with col3:
+    btn3 = st.button("약국 거래 조회창")
 
-if uploaded_file:
-    df = xlsxToDf(uploaded_file)
-    st.success(f"엑셀 파일이 업로드되었습니다. ({len(df)}행)")
+#page 세팅
+if 'page' not in st.session_state:
+    st.session_state.page = 1
+
+if btn1:
+    st.session_state.page = 1
+elif btn2:
+    st.session_state.page = 2
+elif btn3:
+    st.session_state.page = 3
+
+#1번 페이지 세팅 (엑셀 업로드)
+if st.session_state.page == 1:
     
-    # Firestore 반영
-    if st.button("DB에 업로드"):
-        reduce_stock(df)
-        st.success("✅ 데이터가 Firestore에 업로드되었습니다.")
+    st.markdown("DB업로드 페이지")
+    with st.form("upload-form", clear_on_submit=True):
+        uploaded_file = st.file_uploader("아래에 Speedpharm에서 받은 엑셀 파일을 업로드 해 주세요.", type=["xlsx"])
+        submitted_upload = st.form_submit_button("업로드")
+        if submitted_upload and uploaded_file is not None:
+            df = xlsxToDf(uploaded_file)
+            reduce_stock(df)
+            st.success("해당 데이터가 DB에 적용되었습니다.")
+        elif submitted_upload:
+            st.error("엑셀 파일을 먼저 업로드해주세요")
 
-st.divider()
-
-# --- 2️⃣ 검색 영역 ---
-st.sidebar.header("🔍 검색 조건")
-
-# 거래처 및 상품 검색 selectbox (get_product용으로 전달)
-거래처 = st.sidebar.selectbox("거래처 선택", ["전체", "A상사", "B상사", "C상사"])  # 필요시 Firestore에서 목록 불러오기
-상품 = st.sidebar.selectbox("상품명+규격 선택", ["전체", "제품1 500ml", "제품2 1L", "제품3 2L"])
-
-# --- 3️⃣ 기간 설정 ---
-st.sidebar.header("📅 기간 설정")
-start_date = st.sidebar.date_input("시작일", date(2025, 1, 1))
-end_date = st.sidebar.date_input("종료일", date.today())
-
-# --- 4️⃣ 데이터 조회 ---
-if st.sidebar.button("조회하기"):
-    st.subheader("📋 조회 결과")
-
-    # Firestore에서 조건에 맞는 데이터 가져오기
-    result_df = get_product(거래처, 상품, start_date, end_date)
-
-    if result_df is not None and not result_df.empty:
-        st.dataframe(
-            result_df.sort_values("날짜"),
-            use_container_width=True,
-            hide_index=True
-        )
-    else:
-        st.warning("해당 조건에 맞는 데이터가 없습니다.")
+    st.markdown("잘못 적용된 데이터 DB에서 되돌리기")
+    with st.form("undo-form", clear_on_submit=True):
+        undo_file = st.file_uploader("아래에 DB에 잘못 적용된 엑셀 파일을 업로드 해 주세요.", type=["xlsx"])
+        submitted_undo = st.form_submit_button("업로드")
+        if submitted_undo and undo_file is not None:
+            df = xlsxToDf(undo_file)
+            undo_change(df)
+            st.success(f"잘못 반영되었던 해당 데이터가 수정되었습니다.\n해당 데이터의 이름은 <{undo_file.name}>입니다.")
+        elif submitted_undo:
+            st.error("엑셀 파일을 먼저 업로드해주세요")

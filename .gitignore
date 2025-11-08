@@ -1,6 +1,7 @@
 firebase_service_key.json
-./_pycache_
+_pycache_/
 *.xlsx
-./data
+data/
 Firebase_connect.py
-./test
+test/
+app.py_backup
