@@ -10,14 +10,15 @@ st.set_page_config(page_title="재고 관리 시스템", layout="wide")
 st.title("태양메디 재고관리 시스템")
 
 #button 세팅
-col1, col2, col3 = st.columns([1, 1, 1])
+col1, col2, col3, col4 = st.columns([1, 1, 1, 1])
 with col1:
     btn1 = st.button("DB편집창")
 with col2:
     btn2 = st.button("비 약국 거래 + 약국 통합 조회창")
 with col3:
     btn3 = st.button("약국 거래 조회창")
-
+with col4:
+    btn4 = st.button("세부 데이터 세팅창")
 #page 세팅
 if 'page' not in st.session_state:
     st.session_state.page = 1
@@ -28,7 +29,8 @@ elif btn2:
     st.session_state.page = 2
 elif btn3:
     st.session_state.page = 3
-
+elif btn4:
+    st.session_state.page = 4
 #1번 페이지 세팅 (엑셀 업로드)
 if st.session_state.page == 1:
     
@@ -53,3 +55,27 @@ if st.session_state.page == 1:
             st.success(f"잘못 반영되었던 해당 데이터가 수정되었습니다.\n해당 데이터의 이름은 <{undo_file.name}>입니다.")
         elif submitted_undo:
             st.error("엑셀 파일을 먼저 업로드해주세요")
+
+elif st.session_state.page == 2:
+
+    st.markdown("비약국 + 약국 통합 조회창")
+    tmp_file = st.file_uploader("아래에 출력할 엑셀파일 업로드", type = ["xlsx"])
+
+    if tmp_file is not None:
+        df = xlsxToDf(tmp_file)
+        st.success("엑셀 파일 업로드 완료")
+        st.markdown("데이터 엑셀 형식으로 보기")
+        st.dataframe(df, use_container_width=True)
+        
+        #edited_df = st.data_editor(
+        #    df,
+        #    use_container_width = True,
+        #    num_rows="dynamic",
+        #    hide_index = False,
+        #    key="editable_table"
+        #)
+
+        #st.write("데이터 출력")
+        #st.dataframe(edited_df.head(), use_container_width=True)
+    else:
+        st.info("엑셀 파일을 업로드 해주세요")
