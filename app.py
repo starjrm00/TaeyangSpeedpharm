@@ -79,6 +79,21 @@ elif st.session_state.page == 2:
     else:
         st.info("엑셀 파일을 업로드 해주세요")
 
+elif st.session_state.page == 3:
+    st.markdown("약국 거래 조회")
+
+    col1, col2 = st.columns(2)
+    with col1:
+        start_date = st.date_input("시작 날짜")
+    with col2:
+        end_date = st.date_input("종료 날짜")
+
+    if st.button("조회하기"):
+        if start_date > end_date:
+            st.error("시작 날짜는 종료 날짜보다 뒤일 수 없습니다.")
+        else:
+            get_pharmacy_data(start_date, end_date)
+
 elif st.session_state.page == 4:
 
     st.markdown("상품 기본 데이터 입력")
