@@ -1,9 +1,8 @@
 import streamlit as st
 import pandas as pd
 from datetime import date
-from XlsxToDataframe import xlsxToDf
-from Firebase_upload import reduce_stock
-from Firebase_upload import undo_change
+from XlsxToDataframe import xlsxToDf, makeNewProduct
+from Firebase_upload import reduce_stock, undo_change, upload_new_data
 from Firebase_datacheck import datacheck as get_product
 
 st.set_page_config(page_title="재고 관리 시스템", layout="wide")
@@ -79,3 +78,48 @@ elif st.session_state.page == 2:
         #st.dataframe(edited_df.head(), use_container_width=True)
     else:
         st.info("엑셀 파일을 업로드 해주세요")
+
+elif st.session_state.page == 4:
+
+    st.markdown("상품 기본 데이터 입력")
+
+    with st.form("upload-form", clear_on_submit=True):
+        uploaded_file = st.file_uploader("데이터를 설정할 엑셀파일을 업로드 해주세요", type=["xlsx"])
+        submitted_upload = st.form_submit_button("업로드")
+        if submitted_upload and uploaded_file is not None:
+            df = makeNewProduct(uploaded_file)
+            upload_new_data(df)
+            st.success("해당 데이터가 DB에 적용되었습니다.")
+        elif submitted_upload:
+            st.error("엑셀 파일을 먼저 업로드해주세요")
+
+    with st.form("product input form"):
+        st.markdown("직접 하나씩 입력하기")
+        거래처 = st.text_input("거래처", placeholder="예: 후문약국")
+        상품명 = st.text_input("상품명", placeholder="예: 하모닐란액")
+        규격 = st.text_input("규격", placeholder="예: 200mL")
+        단위 = st.text_input("단위", placeholder="예: x개")
+        출고가 = st.number_input("출고가", min_value=0, step=1)
+        입고가 = st.number_input("입고가", min_value=0, step=1)
+        기준약가 = st.number_input("기준약가", min_value=0, step=1)
+
+        submitted = st.form_submit_button("데이터 생성")
+
+        if submitted:
+            if not all([거래처, 상품명, 규격, 단위]):
+                st.error("모든 텍스틑 항목을 입력해주세요")
+            elif 출고가 == 0 or 입고가 == 0 or 기준약가 == 0:
+                st.error("거래 금액 관련 칸이 0입니다. 다시한번 확인해주세요")
+            else:
+                df = pd.DataFrame([{
+                    "거래처": 거래처,
+                    "상품명": 상품명,
+                    "규격": 규격,
+                    "단위": 단위,
+                    "출고가": 출고가,
+                    "입고가": 입고가,
+                    "기준약가": 기준약가
+                }])
+
+                upload_new_data(df)
+                st.success("해당 데이터가 DB에 적용되었습니다.")

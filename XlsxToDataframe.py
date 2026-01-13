@@ -17,3 +17,10 @@ def xlsxToDf(xlsx):
     df_pandas = df_pandas.drop(columns=["수불일자", "매출일자"])
     print(df_pandas)
     return df_pandas
+
+def makeNewProduct(xlsx):
+    df_pandas = pd.read_excel(xlsx, header = 3)
+    df_pandas = df_pandas[["거래처", "상품명", "규격", "단위", "출고가", "입고가", "기준약가"]]
+    df_pandas = df_pandas.dropna(subset = ["거래처", "상품명", "규격", "단위", "출고가", "입고가", "기준약가"])
+    print(df_pandas)
+    return df_pandas
