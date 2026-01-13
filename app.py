@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import date
 from XlsxToDataframe import xlsxToDf, makeNewProduct
-from Firebase_upload import reduce_stock, undo_change, upload_new_data
+from Firebase_upload import upload_trade, undo_trade, upload_new_data
 from Firebase_datacheck import datacheck as get_product
 
 st.set_page_config(page_title="재고 관리 시스템", layout="wide")
@@ -39,7 +39,7 @@ if st.session_state.page == 1:
         submitted_upload = st.form_submit_button("업로드")
         if submitted_upload and uploaded_file is not None:
             df = xlsxToDf(uploaded_file)
-            reduce_stock(df)
+            upload_trade(df)
             st.success("해당 데이터가 DB에 적용되었습니다.")
         elif submitted_upload:
             st.error("엑셀 파일을 먼저 업로드해주세요")
@@ -50,7 +50,7 @@ if st.session_state.page == 1:
         submitted_undo = st.form_submit_button("업로드")
         if submitted_undo and undo_file is not None:
             df = xlsxToDf(undo_file)
-            undo_change(df)
+            undo_trade(df)
             st.success(f"잘못 반영되었던 해당 데이터가 수정되었습니다.\n해당 데이터의 이름은 <{undo_file.name}>입니다.")
         elif submitted_undo:
             st.error("엑셀 파일을 먼저 업로드해주세요")
