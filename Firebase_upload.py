@@ -39,7 +39,7 @@ def reduce_stock(df):
         existing_stock = snapshot.to_dict().get("판매량", {}) if snapshot.exists else {}
 
         current_stock = existing_stock.get(date_str, 0)
-        existing_stock[date_str] = current_stock - row["수량"]
+        existing_stock[date_str] = current_stock + row["수량"]
 
         product_ref.update({
             "판매량": existing_stock
@@ -57,7 +57,7 @@ def undo_change(df):
         existing_stock = snapshot.to_dict().get("판매량", {}) if snapshot.exists else {}
 
         current_stock = existing_stock.get(date_str, 0)
-        existing_stock[date_str] = current_stock + row["수량"]
+        existing_stock[date_str] = current_stock - row["수량"]
 
         #print(product_ref.get().to_dict())
         #print(existing_stock)
