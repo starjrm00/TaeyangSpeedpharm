@@ -1,4 +1,5 @@
 from Firebase_connect import db
+from google.cloud import firestore
 
 def upload_new_data(df):
     for _, row in df.iterrows():
@@ -15,15 +16,14 @@ def upload_new_data(df):
             "입고가": row["입고가"],
             "기준약가": row["기준약가"],
             "단위": row["단위"],
-            "약국": is_pharmacy
+            "pharmacy": is_pharmacy
         }, merge = True)
 
 def upload_trade(df):
     product_cache = {}
     for _, row in df.iterrows():
-        date_str = str(row['날짜'].date())
         product_id = f"{row['거래처']}_{row['상품명']}_{row['규격']}".replace("/", "")
-        trade_id = f"{row['거래처']}_{row['상품명']}_{row['규격']}_{date_str}".replace("/", "")
+        trade_id = f"{row['거래처']}_{row['상품명']}_{row['규격']}_{row["날짜"]}".replace("/", "")
 
         if product_id not in product_cache:
             snapshot = db.collection("Product").document(product_id).get()
@@ -50,8 +50,8 @@ def upload_trade(df):
                 "출고가": product["출고가"],
                 "입고가": product["입고가"],
                 "기준약가": product["기준약가"],
-                "약국": product["약국"],
-                "날짜": date_str,
+                "pharmacy": product["pharmacy"],
+                "date": row["날짜"],
                 "판매량": int(row["수량"])
             }
             trade_ref.set(trade_data)
@@ -59,9 +59,8 @@ def upload_trade(df):
 def undo_trade(df):
     product_cache = {}
     for _, row in df.iterrows():
-        date_str = str(row['날짜'].date())
         product_id = f"{row['거래처']}_{row['상품명']}_{row['규격']}".replace("/", "")
-        trade_id = f"{row['거래처']}_{row['상품명']}_{row['규격']}_{date_str}".replace("/", "")
+        trade_id = f"{row['거래처']}_{row['상품명']}_{row['규격']}_{row["날짜"]}".replace("/", "")
 
         if product_id not in product_cache:
             snapshot = db.collection("Product").document(product_id).get()
@@ -88,8 +87,8 @@ def undo_trade(df):
                 "출고가": product["출고가"],
                 "입고가": product["입고가"],
                 "기준약가": product["기준약가"],
-                "약국": product["약국"],
-                "날짜": date_str,
+                "pharmacy": product["pharmacy"],
+                "date": row["날짜"],
                 "판매량": -int(row["수량"])
             }
             trade_ref.set(trade_data)
