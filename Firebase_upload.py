@@ -5,6 +5,8 @@ def upload_new_data(df):
         doc_id = f"{row['거래처']}_{row['상품명']}_{row['규격']}".replace("/", "")
         product_ref = db.collection("Product").document(doc_id)
 
+        is_pharmacy = "약국" in row["거래처"]
+
         product_ref.set({
             "거래처": row["거래처"],
             "상품명": row["상품명"],
@@ -12,7 +14,8 @@ def upload_new_data(df):
             "출고가": row["출고가"],
             "입고가": row["입고가"],
             "기준약가": row["기준약가"],
-            "단위": row["단위"]
+            "단위": row["단위"],
+            "약국": is_pharmacy
         }, merge = True)
 
 def upload_trade(df):
@@ -47,6 +50,7 @@ def upload_trade(df):
                 "출고가": product["출고가"],
                 "입고가": product["입고가"],
                 "기준약가": product["기준약가"],
+                "약국": product["약국"],
                 "날짜": date_str,
                 "판매량": int(row["수량"])
             }
@@ -84,6 +88,7 @@ def undo_trade(df):
                 "출고가": product["출고가"],
                 "입고가": product["입고가"],
                 "기준약가": product["기준약가"],
+                "약국": product["약국"],
                 "날짜": date_str,
                 "판매량": -int(row["수량"])
             }

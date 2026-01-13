@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import date
 from XlsxToDataframe import xlsxToDf, makeNewProduct
 from Firebase_upload import upload_trade, undo_trade, upload_new_data
+from Firebase_download import get_pharmacy_data
 from Firebase_datacheck import datacheck as get_product
 
 st.set_page_config(page_title="재고 관리 시스템", layout="wide")
@@ -92,7 +93,13 @@ elif st.session_state.page == 3:
         if start_date > end_date:
             st.error("시작 날짜는 종료 날짜보다 뒤일 수 없습니다.")
         else:
-            get_pharmacy_data(start_date, end_date)
+            df = get_pharmacy_data(start_date, end_date)
+
+            if df.empty:
+                st.info("기간 내 약국 거래 데이터가 존재하지 않습니다.")
+            else:
+                st.success(f"{len(df)}개의 거래내역 존재")
+                st.dataframe(df, use_container_width=True)
 
 elif st.session_state.page == 4:
 
