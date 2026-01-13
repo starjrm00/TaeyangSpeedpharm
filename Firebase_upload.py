@@ -1,6 +1,6 @@
 from Firebase_connect import db
 
-def upload_new_data(row):
+def upload_new_data(df):
     for _, row in df.iterrows():
         doc_id = f"{row['거래처']}_{row['상품명']}_{row['규격']}"
         product_ref = db.collection("Product").document(doc_id)
