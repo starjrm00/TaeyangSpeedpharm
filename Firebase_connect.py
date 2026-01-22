@@ -5,11 +5,12 @@ from firebase_admin import credentials, firestore
 import pandas as pd
 import os
 
-#for local
-#cred = credentials.Certificate("firebase_service_key.json")
-
-#for release
-cred = json.loads(st.secrets["firebase_service_key"])
+if os.path.exists("firebase_service_key.json"):
+    #for local
+    cred = credentials.Certificate("firebase_service_key.json")
+else:
+    #for release
+    cred = json.loads(st.secrets["firebase_service_key"])
 
 if not firebase_admin._apps:
     firebase_admin.initialize_app(cred)
