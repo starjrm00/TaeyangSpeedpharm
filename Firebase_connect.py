@@ -10,7 +10,8 @@ if os.path.exists("firebase_service_key.json"):
     cred = credentials.Certificate("firebase_service_key.json")
 else:
     #for release
-    cred = json.loads(st.secrets["firebase_service_key"])
+    cred_dict = json.loads(st.secrets["firebase"]["firebase_service_key"])
+    cred = credentials.Certificate(cred_dict)
 
 if not firebase_admin._apps:
     firebase_admin.initialize_app(cred)
