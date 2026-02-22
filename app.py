@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import date
 from XlsxToDataframe import xlsxToDf, makeNewProduct
 from Firebase_upload import upload_trade, undo_trade, upload_new_data
-from Firebase_download import get_pharmacy_data
+from Firebase_download import get_pharmacy_data, get_all_data
 from Firebase_datacheck import datacheck as get_product
 
 st.set_page_config(page_title="재고 관리 시스템", layout="wide")
@@ -58,27 +58,26 @@ if st.session_state.page == 1:
 
 elif st.session_state.page == 2:
 
-    st.markdown("비약국 + 약국 통합 조회창")
-    tmp_file = st.file_uploader("아래에 출력할 엑셀파일 업로드", type = ["xlsx"])
+    st.markdown("비약국 + 약국 통합 거래 조회")
 
-    if tmp_file is not None:
-        df = xlsxToDf(tmp_file)
-        st.success("엑셀 파일 업로드 완료")
-        st.markdown("데이터 엑셀 형식으로 보기")
-        st.dataframe(df, use_container_width=True)
-        
-        #edited_df = st.data_editor(
-        #    df,
-        #    use_container_width = True,
-        #    num_rows="dynamic",
-        #    hide_index = False,
-        #    key="editable_table"
-        #)
+    col1, col2 = st.columns(2)
+    with col1:
+        start_date = st.date_input("시작 날짜")
+    with col2:
+        end_date = st.date_input("종료 날짜")
 
-        #st.write("데이터 출력")
-        #st.dataframe(edited_df.head(), use_container_width=True)
-    else:
-        st.info("엑셀 파일을 업로드 해주세요")
+    if st.button("조회하기"):
+        if start_date > end_date:
+            st.error("시작 날짜는 종료 날짜보다 뒤일 수 없습니다.")
+        else:
+            df = get_all_data(start_date, end_date)
+
+            if df.empty:
+                st.info("기간 내 약국 거래 데이터가 존재하지 않습니다.")
+            else:
+                st.success(f"{len(df)-2}개의 비약국 거래내역 존재")
+                df.index = df.index+1
+                st.dataframe(df.style.set_properties(subset=["판매량", "순매출"],**{"background-color": "#FFF3B0"}), use_container_width=True)
 
 elif st.session_state.page == 3:
     st.markdown("약국 거래 조회")
