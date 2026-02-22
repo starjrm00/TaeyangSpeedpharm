@@ -4,7 +4,6 @@ from datetime import date
 from XlsxToDataframe import xlsxToDf, makeNewProduct
 from Firebase_upload import upload_trade, undo_trade, upload_new_data
 from Firebase_download import get_pharmacy_data, get_all_data
-from Firebase_datacheck import datacheck as get_product
 
 st.set_page_config(page_title="재고 관리 시스템", layout="wide")
 st.title("태양메디 재고관리 시스템")
@@ -36,10 +35,11 @@ if st.session_state.page == 1:
     
     st.markdown("DB업로드 페이지")
     with st.form("upload-form", clear_on_submit=True):
+        header = st.number_input("엑셀파일 위 필요 없는 줄 갯수", value=3)
         uploaded_file = st.file_uploader("아래에 Speedpharm에서 받은 엑셀 파일을 업로드 해 주세요.", type=["xlsx"])
         submitted_upload = st.form_submit_button("업로드")
         if submitted_upload and uploaded_file is not None:
-            df = xlsxToDf(uploaded_file)
+            df = xlsxToDf(uploaded_file, header)
             upload_trade(df)
             st.success("해당 데이터가 DB에 적용되었습니다.")
         elif submitted_upload:
@@ -47,10 +47,11 @@ if st.session_state.page == 1:
 
     st.markdown("잘못 적용된 데이터 DB에서 되돌리기")
     with st.form("undo-form", clear_on_submit=True):
+        header = st.number_input("엑셀파일 위 필요 없는 줄 갯수", value=3)
         undo_file = st.file_uploader("아래에 DB에 잘못 적용된 엑셀 파일을 업로드 해 주세요.", type=["xlsx"])
         submitted_undo = st.form_submit_button("업로드")
         if submitted_undo and undo_file is not None:
-            df = xlsxToDf(undo_file)
+            df = xlsxToDf(undo_file, header)
             undo_trade(df)
             st.success(f"잘못 반영되었던 해당 데이터가 수정되었습니다.\n해당 데이터의 이름은 <{undo_file.name}>입니다.")
         elif submitted_undo:
@@ -117,6 +118,7 @@ elif st.session_state.page == 4:
 
     with st.form("product input form"):
         st.markdown("직접 하나씩 입력하기")
+        st.text("거래처, 상품명, 규격 3개가 모두 동일할 시 같은 데이터로 취급해서 값이 덮어씌워집니다.")
         거래처 = st.text_input("거래처", placeholder="예: 후문약국")
         상품명 = st.text_input("상품명", placeholder="예: 하모닐란액")
         규격 = st.text_input("규격", placeholder="예: 200mL")
@@ -124,6 +126,11 @@ elif st.session_state.page == 4:
         출고가 = st.number_input("출고가", min_value=0, step=1)
         입고가 = st.number_input("입고가", min_value=0, step=1)
         기준약가 = st.number_input("기준약가", min_value=0, step=1)
+        분류 = st.radio(
+            "거래처 분류 선택",
+            ["약국", "도매", "종합병원"],
+            horizontal=True
+        )
 
         submitted = st.form_submit_button("데이터 생성")
 
@@ -140,7 +147,8 @@ elif st.session_state.page == 4:
                     "단위": 단위,
                     "출고가": 출고가,
                     "입고가": 입고가,
-                    "기준약가": 기준약가
+                    "기준약가": 기준약가,
+                    "기능": 분류
                 }])
 
                 upload_new_data(df)

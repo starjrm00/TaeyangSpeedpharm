@@ -1,8 +1,8 @@
 import pandas as pd
 
-def xlsxToDf(xlsx):
-    print(pd.read_excel(xlsx))
-    df_pandas = pd.read_excel(xlsx, header = 3)
+def xlsxToDf(xlsx, headerLen = 3):
+    #print(pd.read_excel(xlsx))
+    df_pandas = pd.read_excel(xlsx, header = headerLen)
     print(df_pandas.columns.tolist())
 
     #필요한 column만 추출하기
