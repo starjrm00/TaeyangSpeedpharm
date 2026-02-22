@@ -77,13 +77,25 @@ def get_data(start_date, end_date, pharmacy):
     df = df[cols]
 
     grouped_df = (
-        df.groupby("거래내역").agg(
-            기준약가 = ("기준약가", "first"),
-            출고가 = ("출고가", "first"),
-            입고가 = ("입고가", "first"),
+        df.groupby(["거래내역", "기준약가", "출고가", "입고가"]).agg(
             판매량 = ("판매량", "sum"),
             순매출 = ("순매출", "sum")
         ).reset_index()
     )
 
     return grouped_df
+
+def get_product_data():
+    product_ref = db.collection("Product")
+    docs = product_ref.stream()
+    data_list = []
+    for doc in docs:
+        item = doc.to_dict()
+        item["doc_id"] = doc.id
+        data_list.append(item)
+
+    df = pd.DataFrame(data_list)
+    df = df.rename(columns={"pharmacy": "약국여부"})
+    df = df[["doc_id", "거래처", "상품명", "규격", "단위", "기준약가", "출고가", "입고가", "약국여부"]]
+    #df = df[["doc_id", "거래처", "상품명", "규격", "단위", "기준약가", "출고가", "입고가"]]
+    return df

@@ -2,8 +2,8 @@ import streamlit as st
 import pandas as pd
 from datetime import date
 from XlsxToDataframe import xlsxToDf, makeNewProduct
-from Firebase_upload import upload_trade, undo_trade, upload_new_data
-from Firebase_download import get_pharmacy_data, get_all_data
+from Firebase_upload import upload_trade, undo_trade, upload_new_data, edit_product_data
+from Firebase_download import get_pharmacy_data, get_all_data, get_product_data
 
 st.set_page_config(page_title="재고 관리 시스템", layout="wide")
 st.title("태양메디 재고관리 시스템")
@@ -133,9 +133,9 @@ elif st.session_state.page == 4:
         상품명 = st.text_input("상품명", placeholder="예: 하모닐란액")
         규격 = st.text_input("규격", placeholder="예: 200mL")
         단위 = st.text_input("단위", placeholder="예: x개")
-        출고가 = st.number_input("출고가", min_value=0, step=1)
-        입고가 = st.number_input("입고가", min_value=0, step=1)
-        기준약가 = st.number_input("기준약가", min_value=0, step=1)
+        출고가 = st.number_input("출고가", min_value=-1, step=1, value=-1)
+        입고가 = st.number_input("입고가", min_value=-1, step=1, value=-1)
+        기준약가 = st.number_input("기준약가", min_value=-1, step=1, value=-1)
         분류 = st.radio(
             "거래처 분류 선택",
             ["약국", "도매", "종합병원"],
@@ -147,8 +147,8 @@ elif st.session_state.page == 4:
         if submitted:
             if not all([거래처, 상품명, 규격, 단위]):
                 st.error("모든 텍스틑 항목을 입력해주세요")
-            elif 출고가 == 0 or 입고가 == 0 or 기준약가 == 0:
-                st.error("거래 금액 관련 칸이 0입니다. 다시한번 확인해주세요")
+            elif 출고가 < 0 or 입고가 < 0 or 기준약가 < 0:
+                st.error("거래 금액 관련 칸이 음수입니다. 다시한번 확인해주세요")
             else:
                 df = pd.DataFrame([{
                     "거래처": 거래처,
@@ -164,10 +164,23 @@ elif st.session_state.page == 4:
                 upload_new_data(df)
                 st.success("해당 데이터가 DB에 적용되었습니다.")
 elif st.session_state.page == 5:
-    """
-    df = get_product_data()
-    if df.empty:
+    original_df = get_product_data()
+    if original_df.empty:
         st.info("약품 데이터를 불러오는데 오류가 발생했습니다.")
+
     else:
-        st.session_state
-        """
+        display_df = original_df.drop(columns=["doc_id"], errors = 'ignore')
+        edited_df = st.data_editor(
+            display_df,
+            num_rows = "dynamic",
+            use_container_width=True,
+            key = "product_editor"
+        )
+        if st.button("수정사항 저장"):
+            success = edit_product_data(original_df, edited_df)
+
+            if success:
+                st.session_state["edit_product_success"] = True
+        if st.session_state.get("edit_product_success"):
+            st.success("수정사항 반영이 완료되었습니다.")
+            del st.session_state["edit_product_success"]

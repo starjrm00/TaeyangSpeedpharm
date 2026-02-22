@@ -95,3 +95,49 @@ def undo_trade(df):
                 "판매량": -int(row["수량"])
             }
             trade_ref.set(trade_data)
+
+def edit_product_data(original_df, edited_df):
+    product_ref = db.collection("Product")
+
+    # 🔹 기존 doc_id 집합
+    original_ids = set(original_df["doc_id"])
+
+    # 🔹 수정된 doc_id 생성
+    edited_df = edited_df.copy()
+    edited_df["doc_id"] = (
+        edited_df["거래처"] + "_"
+        + edited_df["상품명"] + "_"
+        + edited_df["규격"]
+    )
+
+    edited_ids = set(edited_df["doc_id"])
+
+    # =========================
+    # 1️⃣ 삭제 처리
+    # =========================
+    deleted_ids = original_ids - edited_ids
+
+    for doc_id in deleted_ids:
+        product_ref.document(doc_id).delete()
+
+    # =========================
+    # 2️⃣ 추가 + 수정 처리
+    # =========================
+    for _, row in edited_df.iterrows():
+
+        doc_id = row["doc_id"]
+
+        data = {
+            "거래처": row["거래처"],
+            "상품명": row["상품명"],
+            "규격": row["규격"],
+            "단위": row["단위"],
+            "기준약가": row["기준약가"],
+            "출고가": row["출고가"],
+            "입고가": row["입고가"],
+            "pharmacy": row.get("약국여부", False)
+        }
+
+        product_ref.document(doc_id).set(data)
+
+    return True
