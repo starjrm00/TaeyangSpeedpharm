@@ -20,6 +20,7 @@ def upload_new_data(df):
         }, merge = True)
 
 def upload_trade(df):
+    missing_product = []
     product_cache = {}
     for _, row in df.iterrows():
         product_id = f"{row['거래처']}_{row['상품명']}_{row['규격']}".replace("/", "")
@@ -29,6 +30,7 @@ def upload_trade(df):
             snapshot = db.collection("Product").document(product_id).get()
             if not snapshot.exists:
                 print(f"상품이 없습니다. id : {product_id}")
+                missing_product.append(product_id)
                 continue
             product_cache[product_id] = snapshot.to_dict()
 
@@ -55,6 +57,7 @@ def upload_trade(df):
                 "판매량": int(row["수량"])
             }
             trade_ref.set(trade_data)
+    return missing_product
 
 def undo_trade(df):
     product_cache = {}

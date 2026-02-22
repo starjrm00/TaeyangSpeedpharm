@@ -9,15 +9,17 @@ st.set_page_config(page_title="재고 관리 시스템", layout="wide")
 st.title("태양메디 재고관리 시스템")
 
 #button 세팅
-col1, col2, col3, col4 = st.columns([1, 1, 1, 1])
+col1, col2, col3, col4, col5 = st.columns([2, 2, 2, 1, 1])
 with col1:
-    btn1 = st.button("DB편집창")
+    btn1 = st.button("거래내역 업로드")
 with col2:
     btn2 = st.button("비 약국 거래 + 약국 통합 조회창")
 with col3:
     btn3 = st.button("약국 거래 조회창")
 with col4:
-    btn4 = st.button("세부 데이터 세팅창")
+    btn4 = st.button("약품 데이터 업로드")
+with col5:
+    btn5 = st.button("약품 데이터 편집")
 #page 세팅
 if 'page' not in st.session_state:
     st.session_state.page = 1
@@ -30,6 +32,8 @@ elif btn3:
     st.session_state.page = 3
 elif btn4:
     st.session_state.page = 4
+elif btn5:
+    st.session_state.page = 5
 #1번 페이지 세팅 (엑셀 업로드)
 if st.session_state.page == 1:
     
@@ -40,8 +44,14 @@ if st.session_state.page == 1:
         submitted_upload = st.form_submit_button("업로드")
         if submitted_upload and uploaded_file is not None:
             df = xlsxToDf(uploaded_file, header)
-            upload_trade(df)
-            st.success("해당 데이터가 DB에 적용되었습니다.")
+            missing = upload_trade(df)
+            if missing:
+                undo_trade(df)
+                st.error("DB에 등록되지 않은 제품이 있어 DB 적용이 취소되었습니다.")
+                for missing_product in missing:
+                    st.error(f"{missing_product}상품이 상품 DB에 등록되지 않았습니다.")
+            else:
+                st.success("해당 데이터가 DB에 적용되었습니다.")
         elif submitted_upload:
             st.error("엑셀 파일을 먼저 업로드해주세요")
 
@@ -153,3 +163,11 @@ elif st.session_state.page == 4:
 
                 upload_new_data(df)
                 st.success("해당 데이터가 DB에 적용되었습니다.")
+elif st.session_state.page == 5:
+    """
+    df = get_product_data()
+    if df.empty:
+        st.info("약품 데이터를 불러오는데 오류가 발생했습니다.")
+    else:
+        st.session_state
+        """
