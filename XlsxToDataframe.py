@@ -1,6 +1,7 @@
 import pandas as pd
 
 def xlsxToDf(xlsx):
+    print(pd.read_excel(xlsx))
     df_pandas = pd.read_excel(xlsx, header = 3)
     print(df_pandas.columns.tolist())
 
