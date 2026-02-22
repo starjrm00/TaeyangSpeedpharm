@@ -3,6 +3,8 @@ import pandas as pd
 
 def get_pharmacy_data(start_date, end_date):
     df = get_data(start_date, end_date, True)
+    if(df.empty):
+        return df
     total_row = pd.DataFrame({
         "거래내역": ["합계"],
         "기준약가" : [None],
@@ -19,6 +21,32 @@ def get_pharmacy_data(start_date, end_date):
 def get_all_data(start_date, end_date):
     df_non_pharmacy = get_data(start_date, end_date, False)
     df_pharmacy = get_data(start_date, end_date, True)
+    
+    if(df_non_pharmacy.empty):
+        if(df_pharmacy.empty):
+            return df_pharmacy
+        else:
+            pharmacy_row = pd.DataFrame({
+                "거래내역": ["약국"],
+                "기준약가" : [None],
+                "출고가" : [None],
+                "입고가" : [None],
+                "판매량" : [df_pharmacy["판매량"].sum()],
+                "순매출" : [df_pharmacy["순매출"].sum()]
+            })
+            return pharmacy_row
+        
+    if(df_pharmacy.empty):
+        total_row = pd.DataFrame({
+            "거래내역": ["합계"],
+            "기준약가" : [None],
+            "출고가" : [None],
+            "입고가" : [None],
+            "판매량" : [df_non_pharmacy["판매량"].sum()],
+            "순매출" : [df_non_pharmacy["순매출"].sum()]
+        })
+        df = pd.concat([df_non_pharmacy, total_row], ignore_index = True)
+        return df
     
     pharmacy_row = pd.DataFrame({
         "거래내역": ["약국"],
@@ -75,6 +103,7 @@ def get_data(start_date, end_date, pharmacy):
 
     cols = ["거래내역", "출고가", "입고가", "기준약가", "판매량", "순매출"]
     df = df[cols]
+    df["기준약가"] = df["기준약가"].astype(int)
 
     grouped_df = (
         df.groupby(["거래내역", "기준약가", "출고가", "입고가"]).agg(

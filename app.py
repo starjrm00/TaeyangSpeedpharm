@@ -128,7 +128,7 @@ elif st.session_state.page == 4:
 
     with st.form("product input form"):
         st.markdown("직접 하나씩 입력하기")
-        st.text("거래처, 상품명, 규격 3개가 모두 동일할 시 같은 데이터로 취급해서 값이 덮어씌워집니다.")
+        st.text("거래처, 상품명, 규격 3개가 기존 데이터와 모두 동일할 시 같은 데이터로 취급해서 값이 덮어씌워집니다.")
         거래처 = st.text_input("거래처", placeholder="예: 후문약국")
         상품명 = st.text_input("상품명", placeholder="예: 하모닐란액")
         규격 = st.text_input("규격", placeholder="예: 200mL")
