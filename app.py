@@ -98,8 +98,9 @@ elif st.session_state.page == 3:
             if df.empty:
                 st.info("기간 내 약국 거래 데이터가 존재하지 않습니다.")
             else:
-                st.success(f"{len(df)}개의 거래내역 존재")
-                st.dataframe(df, use_container_width=True)
+                st.success(f"{len(df)-1}개의 거래내역 존재")
+                df.index = df.index+1
+                st.dataframe(df.style.set_properties(subset=["판매량", "순매출"],**{"background-color": "#FFF3B0"}), use_container_width=True)
 
 elif st.session_state.page == 4:
 

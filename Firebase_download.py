@@ -2,6 +2,46 @@ from Firebase_connect import db
 import pandas as pd
 
 def get_pharmacy_data(start_date, end_date):
+    df = get_data(start_date, end_date, True)
+    total_row = pd.DataFrame({
+        "거래내역": ["합계"],
+        "기준약가" : [None],
+        "출고가" : [None],
+        "입고가" : [None],
+        "판매량" : [df["판매량"].sum()],
+        "순매출" : [df["순매출"].sum()]
+    })
+
+    df = pd.concat([df, total_row], ignore_index = True)
+
+    return df
+
+def get_all_data(start_date, end_date):
+    df_non_pharmacy = get_data(start_date, end_date, False)
+    df_pharmacy = get_data(start_date, end_date, True)
+    
+    pharmacy_row = pd.DataFrame({
+        "거래내역": ["약국"],
+        "기준약가" : [None],
+        "출고가" : [None],
+        "입고가" : [None],
+        "판매량" : [df_pharmacy["판매량"].sum()],
+        "순매출" : [df_pharmacy["순매출"].sum()]
+    })
+    df = pd.concat([df_non_pharmacy, pharmacy_row], ignore_index = True)
+
+    total_row = pd.DataFrame({
+        "거래내역": ["합계"],
+        "기준약가" : [None],
+        "출고가" : [None],
+        "입고가" : [None],
+        "판매량" : [df["판매량"].sum()],
+        "순매출" : [df["순매출"].sum()]
+    })
+    df = pd.concat([df, total_row], ignore_index = True)
+    return df
+
+def get_data(start_date, end_date, pharmacy):
     """
     start_date, end_date : datetime.date
     return : pandas DataFrame
@@ -10,7 +50,7 @@ def get_pharmacy_data(start_date, end_date):
     start_ts = pd.Timestamp(start_date)
     end_ts = pd.Timestamp(end_date)
 
-    query = trade_ref.where("date", ">=", start_ts).where("date", "<=", end_ts).where("pharmacy", "==", True)
+    query = trade_ref.where("date", ">=", start_ts).where("date", "<=", end_ts).where("pharmacy", "==", pharmacy)
     docs = query.stream()
 
     data_list = [doc.to_dict() for doc in docs]
@@ -45,4 +85,5 @@ def get_pharmacy_data(start_date, end_date):
             순매출 = ("순매출", "sum")
         ).reset_index()
     )
+
     return grouped_df
