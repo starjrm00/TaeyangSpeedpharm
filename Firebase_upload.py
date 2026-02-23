@@ -1,5 +1,4 @@
 from Firebase_connect import db
-from google.cloud import firestore
 
 def upload_new_data(df):
     for _, row in df.iterrows():
